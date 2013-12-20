@@ -1,0 +1,246 @@
+/*Developed by:
+/ Harrison Stahl https://github.com/Harryman
+/ The Everything Corp
+//// Please Donate if you find this useful: 1LZp3FUqoQVE6Y1Cc7XFpKsrWoz5sTjHe1
+
+
+This library was dynamically generated using the python script in the library folder
+To generateupload segID.ino after changing the variables approriately then run the script and
+enter the digit-segment data as prompted
+
+*/ 
+#include "SPI.h"
+#include "Arduino.h"
+#include "shiftLCD.h"
+
+uint8_t _AlphaNum[] = {
+  63, /* 0 */ //0-9//
+  6, /* 1 */
+  91, /* 2 */
+  79, /* 3 */
+  102, /* 4 */
+  109, /* 5 */
+  125, /* 6 */
+  7, /* 7 */
+  127, /* 8 */
+  111, /* 9 */
+
+  119, /* a 65*/    //10//
+  124, /* b */
+  88, /* c */
+  94, /* d */
+  121, /* E */
+  113, /* F */
+  61, /* g */
+  116, /* h */
+  4, /* i */
+  30, /* j */
+  99, /* degree symbol NOT K */ //20//
+  56, /* L */
+  0,  /* Space 32 NOT M */   
+  84, /* n */
+  92, /* o */
+  115, /* P */
+  103, /* q */
+  80, /* r */
+  109, /* s */
+  120, /* t */
+  28, /* u */     //30//
+  28, /* v... Same as u? */
+  1,  /* seg A Not W */
+  118, /* x */
+  102, /* y */
+  91, /* z 90*/
+  57, /* [ 91*/
+  2,           /* seg B  */
+  15, /* ] 93*/
+  4,           /* seg C */
+  8, /* _ 95 also seg D*/   //40//
+  16,          /* seg E */
+  32,          /* seg F */
+  64,          /* seg G */
+  128         /* seg DP*/
+};
+
+shiftLCD::shiftLCD(uint8_t csPin,uint8_t oePin){//setup all other critical variables are set in the generator script
+  _csPin = csPin;
+  _oePin = oePin;
+  SPI.begin();
+  pinMode(_csPin,OUTPUT);
+  pinMode(_oePin,OUTPUT);
+  digitalWrite(_csPin, HIGH);
+  digitalWrite(_oePin, LOW);
+}
+
+void shiftLCD::setArray(uint8_t segOn, bool add){//sets the elements in the displayArray()
+  if((segOn <= segs || segOn > 0) && (segOn != com)){
+    uint8_t var = 0;
+    uint8_t arrayNum = 0;
+    arrayNum = segOn >> 3;    //divide by 8
+    segOn ^= (arrayNum << 3); //multiply by 8 then subtract
+    var = 1 << segOn;         //sets the approriate bit in var high
+    if(add){
+      displayArray[arrayNum] |= var; 
+    }
+    else{
+      displayArray[arrayNum] &= ~var;
+    }
+  }
+}
+
+void shiftLCD::setChar(uint8_t digit, uint8_t value){//sets a digit using the pin map. dp & col must be set using setArray
+  for(uint8_t i =0; i<7;i++){
+    if(value & (1<<i)){
+      setArray(_pinmap[digit][i],true);
+    }
+  }
+}
+
+
+
+void shiftLCD::display(){//Shifts out the the display data while flipping the bits, so each time its ran is opposite as previous polarity
+  SPI.setBitOrder(LSBFIRST);
+  digitalWrite(_csPin, LOW);
+  digitalWrite(_oePin, HIGH);
+  for(uint8_t i=0; i<shiftRegNum; i++){
+    SPI.transfer(displayArray[i]);
+    displayArray[i] = ~displayArray[i];
+  }
+  digitalWrite(_csPin, HIGH);
+  digitalWrite(_oePin,LOW);
+}
+
+void shiftLCD::clearDisp(){//sets display array to all zeros
+  for(uint8_t i=0; i<shiftRegNum; i++){
+    displayArray[i] = B00000000;
+  }
+}
+
+//Print Character/String functions //////////////////////////////////
+
+void shiftLCD::print(char *str, uint8_t offset){
+  uint8_t digit = 0;
+  for (int x = offset; str[x] != '\0'; x++){
+    if(str[x] == 46 || str[x] == 58){
+      if (str[x] == 46){
+        setArray(_pinmap[digit][7], true);
+      }
+      else{
+        setArray(_pinmap[digit][8], true);
+      }
+    }
+    else{
+      digit++;
+      if(halfD){
+        print(str[x], digit); //starts at the first whole digit
+      }
+      else{
+        print(str[x], digit - 1);
+      }
+    }
+  }
+}
+
+void shiftLCD::print(char c, int pos){
+  if (pos < digits && pos > 0){
+    if(c > 64 && c <96){//caps all map to one set of chars
+      setChar(pos,_AlphaNum[c-54]);
+    }
+    else if(c > 96 && c <123){//lowercase also map to the same char defs
+      setChar(pos, _AlphaNum[c-87]);
+    }   
+    else if(c == 45){ // dash -
+      setChar(pos, _AlphaNum[43]);
+    }
+    else if ((c > 47) & (c < 58)){//numbers
+      setChar(pos, _AlphaNum[c-48]);
+    }
+    else if(c==124){// if "|" set to 1
+      setChar(pos, _AlphaNum[1]);
+    }
+    else{ // space 
+      setChar(pos, _AlphaNum[22]);
+    }
+  }
+}
+//#################################### Print Num #######################################
+
+uint8_t shiftLCD::printInt(int32_t i){ //values that are too large will be truncated 
+  return printInt(i,0);
+}
+
+uint8_t shiftLCD::printInt(int32_t i, uint8_t offset){ //values that are too large will be truncated 
+  uint32_t maxValue = 0;
+  maxValue = negHandler(i);
+  i = abs(i);
+  uint8_t ret = formatSet(i,offset,maxValue);
+  return ret;
+}
+
+uint8_t shiftLCD::formatSet(uint32_t i, uint8_t offset, uint32_t maxValue){//truncates, sets display array, returns number of digits truncated
+  uint16_t t = 1;
+  if(offset){
+    for(uint8_t ia = 0; ia<offset; ia++){
+      t *= 10;
+    }
+    maxValue /= t;
+    t = 1;
+  }
+  uint8_t ret = 0;
+  while(i > maxValue){
+    maxValue *= 10;
+    t *= 10;
+    ret++;
+  }
+  i /= t;
+  int8_t d = digits - offset;
+  for(uint8_t ia = 0; ia < digits; ia++){
+    d--;
+    if(i==0){
+      return ret;
+    }
+    setChar(d,_AlphaNum[(i % 10)]);
+    i /= 10;
+  }
+}
+
+uint32_t shiftLCD::negHandler(int32_t num){// if num is negative sets the negitive segment and returns maxValue
+  if(num<0){
+    setArray(neg,true);
+    return negMax;
+  }
+  else{
+    return maxValue;
+  }
+}
+
+
+void shiftLCD::printFloat(float number){//prints the interger section of the float
+  printFloat(number,0);
+}
+
+void shiftLCD::printFloat(float number, uint8_t decPlaces){//Displays float with specified number of decimal places, will move decimal when truncating
+  for(uint8_t i = 0; i <decPlaces; i++){
+    number *= 10;
+  }
+  decPlaces -= printInt(number);
+  setArray(_pinmap[((digits - 1)-decPlaces)][7],true);
+}
+
+//################ MISC/Utility Functions ####################
+
+void shiftLCD::setCol(bool state, uint8_t digit){
+  if(digit<digits && digit>=0){
+    setArray(_pinmap[digit][8],state);
+  }
+}
+
+void shiftLCD::setSeg(char seg, uint8_t digit){// use lowercase only
+  setSeg(seg,digit,true);
+}
+
+void shiftLCD::setSeg(char seg, uint8_t digit, bool state){
+  if(seg>96 && seg<104 && digit<digits && digit>=0){
+    setArray(_pinmap[digit][seg-97], state);
+  }
+}
