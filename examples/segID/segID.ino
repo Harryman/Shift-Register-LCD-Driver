@@ -10,30 +10,23 @@ Segment Name Map
    | |  ->  e   c
     - x ->    d  dp
 
-   
-Digits are zero refrenced starting from least significant digit
-Example:
- number is: 3756   3 7 5 6
- digits are        4 3 2 1
-
-All which translates to 
-3 = [a[4],b[4],c[4],d[4],g[4]]
-7 = [a[3],b[3],c[3]]
-5 = [a[2],c[2],d[2],f[2],g[2]]
-6 = [a[1],c[1],d[1],e[1],f[1],g[1]]
+0 pin is located at the highest pin of the final(furthest from micro)shift register and fills from there
 
 */ 
 
 #include "SPI.h"
-
+///// THESE ARE THE VARIBLES YOU ARE PROBABLY GOING TO NEED TO CHANGE
 uint8_t segs = 39;//number of segments including com/bp pin
 uint16_t bp = 0; //com pin for backplane
-uint8_t csPin = 9;
-uint8_t oePin = 8;
+uint8_t csPin = 9; //Chip Select Pin
+uint8_t oePin = 8; // Output enable pin, haven't tried tying this on but would probably work
+uint8_t displayArray[5];// change size according to the number of shift registers required to drive 
+
+
+// other vars you shouldn't need to touch
 uint16_t crnt = 1;
 uint32_t lastTime = 0;
 uint32_t crntTime = 0;
-uint8_t displayArray[5];
 uint8_t shiftRegNum = 0;
 
 void setup(){

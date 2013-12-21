@@ -242,7 +242,7 @@ void shiftLCD::printFloat(float number, uint8_t decPlaces){//Displays float with
 
 //################ MISC/Utility Functions ####################
 
-void shiftLCD::setCol(bool state, uint8_t digit){
+void shiftLCD::setCol(uint8_t digit){
   if(digit<digits && digit>=0){
     setArray(_pinmap[digit][8]);
   }
