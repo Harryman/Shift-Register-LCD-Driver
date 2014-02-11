@@ -34,9 +34,8 @@ class shiftLCD{
     uint32_t negHandler(int32_t num);// if num is negative sets the negitive segment and returns maxValue
     void printFloat(float number);//prints the interger section of the float
     void printFloat(float number, uint8_t decPlaces);//Displays float with specified number of decimal places, will move decimal when truncating
-    void setCol(bool state, uint8_t digit);
+    void setCol(uint8_t digit);
     void setSeg(char seg, uint8_t digit);
-    void setSeg(char seg, uint8_t digit, bool state);
 
   private:
     uint8_t _csPin;
