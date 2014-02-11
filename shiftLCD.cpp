@@ -222,12 +222,12 @@ void shiftLCD::printHex(uint32_t hex){
 }
 
 void shiftLCD::printHex(uint32_t hex, uint8_t offset){
-	uint8_t d = offset+1;
-	while(hex>0){
-		setChar(d,_AlphaNum[hex & 0xF]);
-		d++;
-		hex = hex >> 4;
-	}
+  uint8_t d = digits - offset;
+  while(hex>0){
+    setChar(d,_AlphaNum[hex & 0xF]);
+    d--;
+    hex = hex >> 4;
+  }
 }
 
 uint32_t shiftLCD::negHandler(int32_t num){// if num is negative sets the negitive segment and returns maxValue
