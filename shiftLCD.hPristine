@@ -29,6 +29,8 @@ class shiftLCD{
     uint8_t printInt(int32_t i); //values that are too large will be truncated 
     uint8_t printInt(int32_t i, uint8_t offset); //values that are too large will be truncated 
     uint8_t formatSet(uint32_t i, uint8_t offset, uint32_t maxValue);//truncates, sets display array, returns number of digits truncated
+    void printHex(uint32_t hex);//prints hex values
+    void printHex(uint32_t hex, uint8_t offset);
     uint32_t negHandler(int32_t num);// if num is negative sets the negitive segment and returns maxValue
     void printFloat(float number);//prints the interger section of the float
     void printFloat(float number, uint8_t decPlaces);//Displays float with specified number of decimal places, will move decimal when truncating
