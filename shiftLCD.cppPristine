@@ -211,8 +211,8 @@ void shiftLCD::printHex(uint32_t hex){
 void shiftLCD::printHex(uint32_t hex, uint8_t offset){
 	uint8_t d = digits - offset;
 	while(hex>0){
-		setChar(d,_AlphaNum[hex & 0xF]);
 		d--;
+    setChar(d,_AlphaNum[hex & 0xF]);
 		hex = hex >> 4;
 	}
 }
