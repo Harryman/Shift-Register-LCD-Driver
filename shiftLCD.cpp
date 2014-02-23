@@ -143,12 +143,8 @@ void shiftLCD::print(char *str, uint8_t offset){
       }
     }
     else{
+      print(str[x], digit + halfD); //starts at the first whole digit
       digit++;
-      if(halfD){
-        print(str[x], digit); //starts at the first whole digit
-      }
-      else{
-        print(str[x], digit - 1);
       }
     }
   }
