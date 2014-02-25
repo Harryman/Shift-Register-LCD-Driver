@@ -206,12 +206,10 @@ uint8_t shiftLCD::formatSet(uint32_t i, uint8_t offset, uint32_t maxValue){//tru
   int8_t d = digits - offset;
   for(uint8_t ia = 0; ia < digits; ia++){
     d--;
-    if(i==0){
-      return ret;
-    }
     setChar(d,_AlphaNum[(i % 10)]);
     i /= 10;
   }
+  return ret;
 }
 
 void shiftLCD::printHex(uint32_t hex){
