@@ -131,6 +131,7 @@ void shiftLCD::clearDisp(){//sets display array to all zeros
 
 //Print Character/String functions //////////////////////////////////
 
+
 void shiftLCD::print(char *str, uint8_t offset){
   uint8_t digit = 0;
   for (int x = offset; (str[x] != '\0') && ((x-offset)<(digits-halfD)); x++){
@@ -143,14 +144,14 @@ void shiftLCD::print(char *str, uint8_t offset){
       }
     }
     else{
-      print(str[x], digit + halfD); //starts at the first whole digit
+      printChar(str[x], digit + halfD); //starts at the first whole digit
       digit++;
       }
     }
   }
 }
 
-void shiftLCD::print(char c, int pos){
+void shiftLCD::printChar(char c, int pos){
   if (pos < digits && pos > 0){
     if(c > 64 && c <96){//caps all map to one set of chars
       setChar(pos,_AlphaNum[c-54]);
