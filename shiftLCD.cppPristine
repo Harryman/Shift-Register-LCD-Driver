@@ -120,7 +120,7 @@ void shiftLCD::clearDisp(){//sets display array to all zeros
 
 void shiftLCD::print(char *str, uint8_t offset){
   uint8_t digit = 0;
-  for (int x = offset; str[x] != '\0'; x++){
+  for (int x = offset; (str[x] != '\0') && ((x-offset)<(digits-halfD)); x++){
     if(str[x] == 46 || str[x] == 58){
       if (str[x] == 46){
         setArray(_pinmap[digit][7], true);
