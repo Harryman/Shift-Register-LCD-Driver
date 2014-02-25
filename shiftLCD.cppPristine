@@ -190,7 +190,7 @@ uint8_t shiftLCD::formatSet(uint32_t i, uint8_t offset, uint32_t maxValue){//tru
   }
   i /= t;
   int8_t d = digits - offset;
-  for(uint8_t ia = 0; ia < digits; ia++){
+  for(uint8_t ia = offset; ia < digits; ia++){
     d--;
     setChar(d,_AlphaNum[(i % 10)]);
     i /= 10;
