@@ -8,6 +8,12 @@ This library was dynamically generated using the python script in the library fo
 To generateupload segID.ino after changing the variables approriately then run the script and
 enter the digit-segment data as prompted
 
+  a     bit locations >>   0    zero being least significant
+f   b                    5   1  
+  g                        6  
+e   c                    4   2
+  d                        3
+
 */ 
 #include "SPI.h"
 #include "Arduino.h"
@@ -49,7 +55,7 @@ uint8_t _AlphaNum[] = {
   28, /* v... Same as u? */
   1,  /* seg A Not W */
   118, /* x */
-  102, /* y */
+  110, /* y */
   91, /* z 90*/
   57, /* [ 91*/
   2,           /* seg B  */
