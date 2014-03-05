@@ -136,14 +136,13 @@ void shiftLCD::print(char *str, uint8_t offset){
       }
     }
     else{
-      setChar(str[x], digit + halfD); //starts at the first whole digit
+      print(str[x], digit + halfD); //starts at the first whole digit
       digit++;
-      }
     }
   }
 }
 
-void shiftLCD::printChar(char c, int pos){
+void shiftLCD::print(char c, int pos){
   if (pos < digits && pos > 0){
     if(c > 64 && c <96){//caps all map to one set of chars
       setChar(pos,_AlphaNum[c-54]);
