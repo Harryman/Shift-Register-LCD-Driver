@@ -136,7 +136,7 @@ void shiftLCD::print(char *str, uint8_t offset){
       }
     }
     else{
-      printChar(str[x], digit + halfD); //starts at the first whole digit
+      setChar(str[x], digit + halfD); //starts at the first whole digit
       digit++;
       }
     }
