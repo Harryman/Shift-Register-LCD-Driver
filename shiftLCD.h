@@ -24,8 +24,9 @@ class shiftLCD{
     void setChar(uint8_t digit, uint8_t value);//sets a digit using the pin map. dp & col must be set using setArray
     void display();//Shifts out the the display data while flipping the bits, so each time its ran is opposite as previous polarity
     void clearDisp();//sets display array to all zeros
+    void print(char *str);
     void print(char *str, uint8_t offset);
-    void print(char c, int pos);
+    void printChar(char c, int pos);
     uint8_t printInt(int32_t i); //values that are too large will be truncated 
     uint8_t printInt(int32_t i, uint8_t offset); //values that are too large will be truncated 
     uint8_t formatSet(uint32_t i, uint8_t offset, uint32_t maxValue);//truncates, sets display array, returns number of digits truncated
