@@ -103,7 +103,7 @@ void shiftLCD::setArray(uint8_t segOn){//sets the elements in the displayArray()
     arrayNum = segOn >> 3;    //divide by 8
     segOn ^= (arrayNum << 3); //multiply by 8 then subtract
     var = 1 << segOn;         //sets the approriate bit in var high
-    displayArray[arrayNum] |= var; 
+    displayArray[arrayNum] ^= var; 
   }
 }
 

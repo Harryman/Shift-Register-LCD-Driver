@@ -76,21 +76,17 @@ shiftLCD::shiftLCD(uint8_t csPin,uint8_t oePin){//setup all other critical varia
   pinMode(_oePin,OUTPUT);
   digitalWrite(_csPin, HIGH);
   digitalWrite(_oePin, LOW);
+
 }
 
-void shiftLCD::setArray(uint8_t segOn, bool add){//sets the elements in the displayArray()
+void shiftLCD::setArray(uint8_t segOn){//sets the elements in the displayArray()
   if((segOn <= segs || segOn > 0) && (segOn != com)){
     uint8_t var = 0;
     uint8_t arrayNum = 0;
     arrayNum = segOn >> 3;    //divide by 8
     segOn ^= (arrayNum << 3); //multiply by 8 then subtract
     var = 1 << segOn;         //sets the approriate bit in var high
-    if(add){
-      displayArray[arrayNum] |= var; 
-    }
-    else{
-      displayArray[arrayNum] &= ~var;
-    }
+    displayArray[arrayNum] ^= var; 
   }
 }
 
