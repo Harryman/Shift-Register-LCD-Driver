@@ -14,6 +14,8 @@ f   b                    5   1
 e   c                    4   2
   d                        3
   
+digits are zero indexed starting at the Most Signigifcant Digit
+
 */ 
 #include "SPI.h"
 #include "Arduino.h"
@@ -213,7 +215,9 @@ uint8_t shiftLCD::formatSet(uint32_t i, uint8_t offset, uint32_t maxValue){//tru
   int8_t d = digits - offset;
   for(uint8_t ia = offset; ia < digits; ia++){
     d--;
-    setChar(d,_AlphaNum[(i % 10)]);
+    if((d == digits - 1) || (i != 0)){
+      setChar(d,_AlphaNum[(i % 10)]);
+    }
     i /= 10;
   }
   return ret;
