@@ -137,7 +137,7 @@ void shiftLCD::clearDisp(){//sets display array to all zeros
 
 //Print Character/String functions //////////////////////////////////
 void shiftLCD::print(char *str){
-  print(*str,0);
+  print(str,0);
 }
 
 void shiftLCD::print(char *str, uint8_t offset){
